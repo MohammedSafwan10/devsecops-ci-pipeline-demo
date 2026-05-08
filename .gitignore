@@ -1,0 +1,12 @@
+node_modules/
+coverage/
+.env
+.env.*
+!.env.example
+.terraform/
+terraform.tfstate
+terraform.tfstate.*
+*.tfplan
+tfplan
+npm-debug.log*
+sonar-report.json

@@ -1,0 +1,9 @@
+severity:
+  - HIGH
+  - CRITICAL
+ignore-unfixed: true
+exit-code: 1
+skip-dirs:
+  - node_modules
+  - coverage
+  - .terraform

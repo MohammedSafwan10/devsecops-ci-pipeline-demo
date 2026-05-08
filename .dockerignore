@@ -1,0 +1,10 @@
+.git
+.github
+.terraform
+coverage
+docs
+node_modules
+npm-debug.log
+sonar-project.properties
+terraform.tfstate*
+*.tfplan

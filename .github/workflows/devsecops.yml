@@ -1,0 +1,222 @@
+name: DevSecOps CI/CD
+
+on:
+  push:
+    branches:
+      - main
+      - "demo/**"
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: devsecops-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: "24"
+  LOCAL_IMAGE_NAME: devsecops-ci-pipeline-demo
+  TRIVY_IMAGE: aquasec/trivy:0.70.0@sha256:be1190afcb28352bfddc4ddeb71470835d16462af68d310f9f4bca710961a41e
+  SEMGREP_IMAGE: semgrep/semgrep:1.162.0@sha256:9349edbadf90c3f3c0c3f55867625354e89680e6fa10d9034042af52fdb0e0d0
+
+jobs:
+  test:
+    name: Install, Lint, Test
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Unit tests with coverage
+        run: npm test
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: coverage
+          path: coverage/lcov.info
+          if-no-files-found: error
+          retention-days: 7
+
+  sast:
+    name: SAST - Semgrep CE
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Run Semgrep SAST
+        run: |
+          docker run --rm \
+            -v "$PWD:/src" \
+            -w /src \
+            "$SEMGREP_IMAGE" \
+            semgrep scan --config auto --error .
+
+  dependency_scan:
+    name: Dependency CVE Scan - Trivy
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Run Trivy filesystem scan
+        run: |
+          docker run --rm \
+            -v "$PWD:/project" \
+            -w /project \
+            "$TRIVY_IMAGE" \
+            fs --config trivy.yaml --no-progress .
+
+  iac:
+    name: Terraform Validate and IaC Scan
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3
+        with:
+          terraform_version: 1.15.2
+
+      - name: Terraform format check
+        run: terraform -chdir=infra fmt -check -recursive
+
+      - name: Terraform init
+        run: terraform -chdir=infra init -backend=false
+
+      - name: Terraform validate
+        run: terraform -chdir=infra validate
+
+      - name: Trivy Terraform/IaC misconfiguration scan
+        run: |
+          rm -f infra/tfplan
+          docker run --rm \
+            -v "$PWD:/project" \
+            -w /project \
+            "$TRIVY_IMAGE" \
+            config --severity HIGH,CRITICAL --exit-code 1 infra/
+
+      - name: Terraform speculative plan
+        run: terraform -chdir=infra plan -no-color -out=tfplan
+
+  image_scan:
+    name: Container Image Scan - Trivy
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Build Docker image
+        run: docker build -t "$LOCAL_IMAGE_NAME:${{ github.sha }}" .
+
+      - name: Run Trivy image scan
+        run: |
+          docker run --rm \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            "$TRIVY_IMAGE" \
+            image --ignore-unfixed --severity HIGH,CRITICAL --exit-code 1 --no-progress "$LOCAL_IMAGE_NAME:${{ github.sha }}"
+
+  sonarqube:
+    name: Code Quality - SonarQube Cloud
+    runs-on: ubuntu-24.04
+    needs: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate coverage for SonarQube
+        run: npm test
+
+      - name: Validate SonarQube Cloud settings
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_ORGANIZATION: ${{ vars.SONAR_ORGANIZATION }}
+          SONAR_PROJECT_KEY: ${{ vars.SONAR_PROJECT_KEY }}
+        run: |
+          if [ -z "$SONAR_TOKEN" ]; then
+            echo "::error::Missing SONAR_TOKEN repository secret."
+            exit 1
+          fi
+          if [ -z "$SONAR_ORGANIZATION" ]; then
+            echo "::error::Missing SONAR_ORGANIZATION repository variable."
+            exit 1
+          fi
+          if [ -z "$SONAR_PROJECT_KEY" ]; then
+            echo "::error::Missing SONAR_PROJECT_KEY repository variable."
+            exit 1
+          fi
+
+      - name: Run SonarQube Cloud scan
+        # nosemgrep: generic.secrets.security.detected-sonarqube-docs-api-key.detected-sonarqube-docs-api-key - immutable action commit SHA, not a credential.
+        uses: SonarSource/sonarqube-scan-action@c7ee0f9df90b7aa20e8dcf9695dcfe2e7da5b4f2 # v7
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }}
+            -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }}
+
+  publish:
+    name: Publish Image to GHCR
+    runs-on: ubuntu-24.04
+    needs:
+      - test
+      - sast
+      - dependency_scan
+      - iac
+      - image_scan
+      - sonarqube
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Login to GHCR
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: echo "$GITHUB_TOKEN" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: Prepare lowercase image name
+        run: echo "IMAGE_NAME=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
+
+      - name: Build and publish Docker image
+        run: |
+          docker buildx build \
+            --push \
+            --tag "$IMAGE_NAME:${{ github.sha }}" \
+            --tag "$IMAGE_NAME:latest" \
+            .

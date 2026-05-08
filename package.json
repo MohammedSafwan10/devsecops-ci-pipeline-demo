@@ -1,0 +1,40 @@
+{
+  "name": "devsecops-ci-pipeline-demo",
+  "version": "1.0.0",
+  "description": "College-ready DevSecOps CI/CD pipeline demo with security gates for SAST, code quality, dependency, container, and IaC scanning.",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "lint": "eslint . --max-warnings=0",
+    "test": "jest --coverage --runInBand",
+    "test:watch": "jest --watch",
+    "docker:build": "docker build -t devsecops-ci-pipeline-demo:local .",
+    "docker:run": "docker run --rm -p 3000:3000 devsecops-ci-pipeline-demo:local"
+  },
+  "keywords": [
+    "devsecops",
+    "ci-cd",
+    "github-actions",
+    "trivy",
+    "semgrep",
+    "sonarqube",
+    "terraform",
+    "docker"
+  ],
+  "author": "Mohammed Safwan",
+  "license": "MIT",
+  "dependencies": {
+    "express": "5.2.1",
+    "helmet": "8.1.0"
+  },
+  "devDependencies": {
+    "eslint": "10.3.0",
+    "globals": "17.6.0",
+    "jest": "30.4.1",
+    "supertest": "7.2.2"
+  }
+}
