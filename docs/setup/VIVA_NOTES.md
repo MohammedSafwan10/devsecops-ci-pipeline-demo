@@ -1,16 +1,16 @@
-# Viva Notes
+# Explanation Notes
 
 ## What is this project?
 
 This is a DevSecOps CI/CD pipeline project.
 
-It uses a small Express API as a sample app. The main focus is the pipeline that checks the app automatically whenever code is pushed to the configured branches or opened as a pull request.
+It uses an Express API as the application that is checked by the pipeline. The pipeline runs automatically when code is pushed to the configured branches or opened as a pull request.
 
-## Why is the API small?
+## Why is the API not large?
 
-The API is small because the project is about CI/CD and security automation, not about building a large web application.
+The API is focused on the endpoints needed to test, scan, containerize, and publish the application.
 
-The API gives simple endpoints so testing, Docker, scanning, and deployment can be shown clearly.
+The API endpoints make it easy to verify that the app is running and that the pipeline metadata is available.
 
 ## What is CI/CD?
 

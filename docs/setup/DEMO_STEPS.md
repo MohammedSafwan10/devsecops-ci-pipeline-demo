@@ -1,8 +1,8 @@
 # Demo Steps
 
-Use this flow during a project demo or viva.
+Use this flow to demonstrate the project.
 
-## Green Pipeline Demo
+## Successful Pipeline
 
 1. Open the GitHub repository.
 2. Click `Actions`.
@@ -17,7 +17,7 @@ Use this flow during a project demo or viva.
    - `Publish Image to GHCR`
 5. Explain that publishing happens only after all checks pass.
 
-## Local App Demo
+## Local App
 
 Run:
 
@@ -37,7 +37,7 @@ Explain:
 - `/health` shows the API is alive.
 - `/api/status` lists the DevSecOps gates.
 
-## Failed Security Demo
+## Failed Security Branch
 
 The project has a separate branch:
 
@@ -45,11 +45,11 @@ The project has a separate branch:
 demo/failing-security-gates
 ```
 
-This branch has intentional bad examples. It is used only for screenshots and demo.
+This branch has intentional security issues for showing how failed gates block the workflow.
 
 Open a pull request from that same repository branch to `main`.
 
-Use a same-repository branch for the demo, not a forked pull request, because SonarQube Cloud needs the GitHub repository secret during the workflow.
+Use a same-repository branch, not a forked pull request, because SonarQube Cloud needs the GitHub repository secret during the workflow.
 
 Expected result:
 
@@ -57,7 +57,7 @@ Expected result:
 - The unsafe build is blocked.
 - The Docker image is not published.
 
-## Short Demo Script
+## Short Explanation
 
 Say this:
 

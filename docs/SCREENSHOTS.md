@@ -1,6 +1,6 @@
 # Screenshot Checklist
 
-Use these screenshots for the college submission or presentation.
+Useful screenshots to capture:
 
 1. GitHub repository home page.
 2. Successful GitHub Actions run on `main`.
@@ -13,4 +13,4 @@ Use these screenshots for the college submission or presentation.
 9. Docker Desktop showing the running app container.
 10. Optional local SonarQube Community Build dashboard at `localhost:9000`.
 
-Recommended final story: show the green path first, then show the unsafe PR being blocked.
+Recommended flow: show the successful pipeline first, then show the unsafe branch being blocked.

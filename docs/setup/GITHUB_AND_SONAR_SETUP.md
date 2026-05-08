@@ -6,7 +6,7 @@ This part is needed only when the project is uploaded to GitHub and the CI/CD pi
 
 Create a public GitHub repository.
 
-Public is recommended because GitHub Actions and GitHub Container Registry are easier to use for a student project.
+Public is recommended because GitHub Actions and GitHub Container Registry are easier to use without paid settings.
 
 If the project was received as a zip, extract it first. Then open PowerShell inside the extracted folder and push it to the new repository:
 

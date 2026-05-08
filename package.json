@@ -1,7 +1,7 @@
 {
   "name": "devsecops-ci-pipeline-demo",
   "version": "1.0.0",
-  "description": "College-ready DevSecOps CI/CD pipeline demo with security gates for SAST, code quality, dependency, container, and IaC scanning.",
+  "description": "DevSecOps CI/CD pipeline with security gates for SAST, code quality, dependency, container, and IaC scanning.",
   "main": "src/server.js",
   "engines": {
     "node": ">=24.0.0"
@@ -25,7 +25,6 @@
     "terraform",
     "docker"
   ],
-  "author": "Mohammed Safwan",
   "license": "MIT",
   "dependencies": {
     "express": "5.2.1",

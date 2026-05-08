@@ -44,4 +44,4 @@ terraform version
 sonar-scanner --version
 ```
 
-If the app only needs to be shown locally, Node.js and Docker Desktop are enough. If the full security demo is needed locally, install all tools in the table.
+If the app only needs to run locally, Node.js and Docker Desktop are enough. If the full security checks need to run locally, install all tools in the table.

@@ -1,6 +1,6 @@
 # Project Submission Guide
 
-This guide explains how to present and submit the DevSecOps CI/CD Pipeline Demo.
+This guide explains the project files, setup, and suggested demonstration flow.
 
 ## Project Title
 
@@ -10,7 +10,7 @@ End-to-End DevSecOps CI/CD Pipeline with Automated Security Gates
 
 ## Project Summary
 
-This project demonstrates a complete DevSecOps CI/CD pipeline for a Node.js Express application.
+This project demonstrates a DevSecOps CI/CD pipeline for a Node.js Express application.
 
 Whenever code is pushed to GitHub, the pipeline automatically runs tests, code quality checks, SAST, dependency vulnerability scanning, Docker image scanning, and Terraform/IaC scanning.
 
@@ -18,7 +18,7 @@ If any serious issue is found, the pipeline fails and blocks the build. The Dock
 
 ## What to Submit
 
-The project submission can include:
+The project folder includes:
 
 - Source code
 - Test cases
@@ -27,7 +27,7 @@ The project submission can include:
 - GitHub Actions workflow
 - SonarQube Cloud setup
 - Screenshots of successful and failed pipeline runs
-- Short explanation or viva notes
+- Short explanation notes
 
 ## Recommended Screenshots
 
@@ -40,11 +40,11 @@ The project submission can include:
 7. Trivy or Semgrep failure log.
 8. Terraform validation/IaC scan step.
 
-## Demo Flow
+## Demonstration Flow
 
 Start with the successful pipeline.
 
-Then show the failed security demo.
+Then show the failed security branch.
 
 This gives a clear story:
 
@@ -84,4 +84,3 @@ DevSecOps CI/CD
 ```
 
 The important point is that every check is automatic. No manual scanning is needed after code is pushed.
-

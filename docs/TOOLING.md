@@ -4,7 +4,7 @@
 | --- | --- | --- |
 | GitHub Actions | Runs CI/CD on push and pull request | Orchestrates all gates |
 | Docker | Builds and runs the API container | Required for image scan and publish |
-| Docker Compose | Runs the app and optional SonarQube locally | Local demo support |
+| Docker Compose | Runs the app and optional SonarQube locally | Local run support |
 | Semgrep CE | Static Application Security Testing | Fails on SAST findings |
 | Trivy filesystem | Dependency and repository CVE scan | Fails on HIGH/CRITICAL |
 | Trivy config | Terraform/IaC misconfiguration scan | Fails on HIGH/CRITICAL |
@@ -15,7 +15,7 @@
 
 ## Why SonarQube Cloud and Local SonarQube Both Exist
 
-GitHub-hosted runners cannot access a SonarQube server running on a student's laptop. SonarQube Cloud solves that for real CI quality gates on public repositories. The local SonarQube Community Build container is included for screenshots and hands-on dashboard explanation.
+GitHub-hosted runners cannot access a SonarQube server running on a laptop. SonarQube Cloud solves that for CI quality gates on public repositories. The local SonarQube Community Build container is included for optional local dashboard checks.
 
 ## Why Actions Are Pinned
 

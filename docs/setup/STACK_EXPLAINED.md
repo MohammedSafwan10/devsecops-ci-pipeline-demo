@@ -1,10 +1,10 @@
 # Stack Explained
 
-This file explains what each tool does in simple words.
+This file explains what each tool does.
 
 | Tool | Simple meaning | Why used here |
 | --- | --- | --- |
-| Node.js | JavaScript runtime | Runs the demo API |
+| Node.js | JavaScript runtime | Runs the API |
 | Express | Web API framework | Creates `/health` and `/api/status` endpoints |
 | Jest | Testing framework | Runs unit/API tests |
 | Supertest | API testing helper | Tests Express routes |
@@ -20,11 +20,9 @@ This file explains what each tool does in simple words.
 | SonarQube Cloud | Code quality platform | Gives quality gate, coverage, maintainability checks |
 | GHCR | GitHub Container Registry | Stores Docker image after all gates pass |
 
-## Why This Stack Is Good for a College Project
+## Pipeline Flow
 
-It uses real industry tools but does not need paid cloud servers.
-
-The project proves the complete DevSecOps flow:
+The project shows this DevSecOps flow:
 
 1. Developer pushes code.
 2. CI pipeline starts automatically.
@@ -36,4 +34,3 @@ The project proves the complete DevSecOps flow:
 8. SonarQube checks code quality.
 9. If everything passes, the image is published.
 10. If anything fails, the build is blocked.
-
