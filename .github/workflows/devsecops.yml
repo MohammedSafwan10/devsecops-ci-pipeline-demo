@@ -187,6 +187,57 @@ jobs:
             -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }}
             -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }}
 
+      - name: Enforce SonarQube Cloud quality gate
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          report_file=".scannerwork/report-task.txt"
+          if [ ! -f "$report_file" ]; then
+            echo "::error::SonarQube report task file was not created."
+            exit 1
+          fi
+
+          ce_task_id="$(grep '^ceTaskId=' "$report_file" | cut -d= -f2)"
+          if [ -z "$ce_task_id" ]; then
+            echo "::error::SonarQube compute task id was not found."
+            exit 1
+          fi
+
+          analysis_id=""
+          for attempt in {1..60}; do
+            ce_response="$(curl --fail --silent --show-error --user "${SONAR_TOKEN}:" "https://sonarcloud.io/api/ce/task?id=${ce_task_id}")"
+            ce_status="$(node -e "const data = JSON.parse(process.argv[1]); console.log(data.task.status);" "$ce_response")"
+
+            if [ "$ce_status" = "SUCCESS" ]; then
+              analysis_id="$(node -e "const data = JSON.parse(process.argv[1]); console.log(data.task.analysisId || '');" "$ce_response")"
+              break
+            fi
+
+            if [ "$ce_status" = "FAILED" ] || [ "$ce_status" = "CANCELED" ]; then
+              echo "::error::SonarQube analysis ended with status ${ce_status}."
+              exit 1
+            fi
+
+            echo "Waiting for SonarQube analysis to finish (${ce_status}, attempt ${attempt}/60)..."
+            sleep 5
+          done
+
+          if [ -z "$analysis_id" ]; then
+            echo "::error::Timed out waiting for SonarQube analysis."
+            exit 1
+          fi
+
+          gate_response="$(curl --fail --silent --show-error --user "${SONAR_TOKEN}:" "https://sonarcloud.io/api/qualitygates/project_status?analysisId=${analysis_id}")"
+          gate_status="$(node -e "const data = JSON.parse(process.argv[1]); console.log(data.projectStatus.status);" "$gate_response")"
+
+          echo "SonarQube quality gate status: ${gate_status}"
+          if [ "$gate_status" != "OK" ]; then
+            node -e "const data = JSON.parse(process.argv[1]); for (const c of data.projectStatus.conditions || []) { if (c.status !== 'OK') console.log(`${c.metricKey}: ${c.actualValue} ${c.comparator || ''} ${c.errorThreshold || ''}`); }" "$gate_response"
+            exit 1
+          fi
+
   publish:
     name: Publish Image to GHCR
     runs-on: ubuntu-24.04
