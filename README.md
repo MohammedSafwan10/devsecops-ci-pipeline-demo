@@ -4,6 +4,8 @@ College-ready project showing an end-to-end CI/CD pipeline with automated securi
 
 ## What This Project Demonstrates
 
+For a simple student/client handoff, start with [docs/setup/START_HERE.md](docs/setup/START_HERE.md).
+
 ```mermaid
 flowchart LR
     A["Developer Push / Pull Request"] --> B["GitHub Actions"]
