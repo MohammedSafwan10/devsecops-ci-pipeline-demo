@@ -41,7 +41,7 @@ docker compose version
 trivy --version
 semgrep --version
 terraform version
+sonar-scanner --version
 ```
 
 If the app only needs to be shown locally, Node.js and Docker Desktop are enough. If the full security demo is needed locally, install all tools in the table.
-

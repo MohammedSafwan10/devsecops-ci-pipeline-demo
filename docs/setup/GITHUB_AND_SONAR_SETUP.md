@@ -8,7 +8,16 @@ Create a public GitHub repository.
 
 Public is recommended because GitHub Actions and GitHub Container Registry are easier to use for a student project.
 
-Upload the project files to the repository.
+If the project was received as a zip, extract it first. Then open PowerShell inside the extracted folder and push it to the new repository:
+
+```powershell
+git init
+git add .
+git commit -m "Initial DevSecOps CI/CD project"
+git branch -M main
+git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
+git push -u origin main
+```
 
 ## 2. Create SonarQube Cloud Project
 
@@ -51,11 +60,19 @@ In GitHub repository:
 Add:
 
 ```text
-SONAR_ORGANIZATION=mohammedsafwan10
-SONAR_PROJECT_KEY=mohammedsafwan10_devsecops-ci-pipeline-demo
+SONAR_ORGANIZATION=<your SonarQube Cloud organization key>
+SONAR_PROJECT_KEY=<your SonarQube Cloud project key>
 ```
 
-If the repository belongs to a different user or organization, these values must match that SonarQube Cloud project.
+These values must match the SonarQube Cloud project that was created from the GitHub repository.
+
+Optional:
+
+```text
+SONAR_BRANCH_NAME=<branch name used as the main branch in SonarQube Cloud>
+```
+
+Most new GitHub repositories use `main`, so this optional variable is usually not needed. Add it only if SonarQube Cloud shows a different main branch name.
 
 ## 6. Run Pipeline
 
@@ -77,5 +94,4 @@ Expected result on clean code:
 
 ## Note About Main Branch
 
-In this submitted project, SonarQube Cloud was using `master` internally while GitHub used `main`. A small compatibility setup is included in the workflow so the CI/CD pipeline works correctly.
-
+For most new repositories, GitHub and SonarQube Cloud will both use `main`. If SonarQube Cloud shows a different branch name, add the optional `SONAR_BRANCH_NAME` GitHub Actions variable so the scan points to the correct branch.

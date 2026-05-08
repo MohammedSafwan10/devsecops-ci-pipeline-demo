@@ -43,6 +43,12 @@ http://localhost:3000/api/status
 
 `/api/status` shows the security gates used in the project.
 
+Stop the local API before starting Docker in the next step:
+
+```powershell
+Ctrl + C
+```
+
 ## 5. Run with Docker
 
 ```powershell
@@ -78,10 +84,13 @@ semgrep scan --config auto --error .
 trivy fs --config trivy.yaml --no-progress .
 docker build -t devsecops-ci-pipeline-demo:local .
 trivy image --ignore-unfixed --severity HIGH,CRITICAL --exit-code 1 --no-progress devsecops-ci-pipeline-demo:local
+terraform -chdir=infra fmt -check -recursive
 terraform -chdir=infra init -backend=false
 terraform -chdir=infra validate
+Remove-Item -LiteralPath "infra\tfplan" -Force -ErrorAction SilentlyContinue
 trivy config --severity HIGH,CRITICAL --exit-code 1 infra/
+terraform -chdir=infra plan -no-color -out=tfplan
+Remove-Item -LiteralPath "infra\tfplan" -Force -ErrorAction SilentlyContinue
 ```
 
 If any command fails, the same type of issue would block the CI/CD pipeline.
-

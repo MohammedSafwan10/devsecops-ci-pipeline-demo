@@ -2,7 +2,7 @@
 
 This project is a DevSecOps CI/CD pipeline demo.
 
-The small Node.js API is only the sample application. The main work is the automated pipeline around it. Whenever code is pushed to GitHub, the pipeline checks code quality, security issues, dependency vulnerabilities, Docker image vulnerabilities, and Terraform/IaC mistakes. If a serious issue is found, the build fails and the Docker image is not published.
+The small Node.js API is only the sample application. The main work is the automated pipeline around it. Whenever code is pushed to the configured GitHub branches or opened as a pull request, the pipeline checks code quality, security issues, dependency vulnerabilities, Docker image vulnerabilities, and Terraform/IaC mistakes. If a serious issue is found, the build fails and the Docker image is not published.
 
 ## What to Show First
 
@@ -37,4 +37,3 @@ docker compose up --build
 ## Important Note
 
 The project can run locally without GitHub Actions, but the full CI/CD automation needs a GitHub repository and a SonarQube Cloud token.
-

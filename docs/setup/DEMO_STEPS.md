@@ -47,7 +47,9 @@ demo/failing-security-gates
 
 This branch has intentional bad examples. It is used only for screenshots and demo.
 
-Open a pull request from that branch to `main`.
+Open a pull request from that same repository branch to `main`.
+
+Use a same-repository branch for the demo, not a forked pull request, because SonarQube Cloud needs the GitHub repository secret during the workflow.
 
 Expected result:
 
@@ -62,4 +64,3 @@ Say this:
 ```text
 This project shows a DevSecOps CI/CD pipeline. When code is pushed, GitHub Actions automatically runs testing, SAST, dependency scanning, Docker image scanning, Terraform/IaC scanning, and SonarQube quality checks. If any serious issue is found, the pipeline fails and blocks the build. Only clean code on the main branch is allowed to publish a Docker image to GHCR.
 ```
-

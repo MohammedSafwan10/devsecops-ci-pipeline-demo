@@ -1,6 +1,6 @@
 # DevSecOps CI/CD Pipeline Demo
 
-College-ready project showing an end-to-end CI/CD pipeline with automated security gates. The pipeline checks application code, dependencies, Terraform/IaC, and Docker images on every commit. Unsafe builds fail before the container image is published.
+College-ready project showing an end-to-end CI/CD pipeline with automated security gates. The pipeline checks application code, dependencies, Terraform/IaC, and Docker images on pushes to the protected demo branches and on pull requests. Unsafe builds fail before the container image is published.
 
 ## What This Project Demonstrates
 
@@ -85,12 +85,15 @@ Manual commands:
 ```powershell
 semgrep scan --config auto --error .
 trivy fs --config trivy.yaml --no-progress .
+docker build -t devsecops-ci-pipeline-demo:local .
 trivy image --ignore-unfixed --severity HIGH,CRITICAL --exit-code 1 --no-progress devsecops-ci-pipeline-demo:local
 terraform -chdir=infra fmt -check -recursive
 terraform -chdir=infra init -backend=false
 terraform -chdir=infra validate
-terraform -chdir=infra plan -no-color -out=tfplan
+Remove-Item -LiteralPath "infra\tfplan" -Force -ErrorAction SilentlyContinue
 trivy config --severity HIGH,CRITICAL --exit-code 1 infra/
+terraform -chdir=infra plan -no-color -out=tfplan
+Remove-Item -LiteralPath "infra\tfplan" -Force -ErrorAction SilentlyContinue
 ```
 
 ## SonarQube Cloud Setup
@@ -100,8 +103,9 @@ Create a free SonarQube Cloud project for the public GitHub repository.
 Add these GitHub repository settings:
 
 - Secret: `SONAR_TOKEN` from SonarQube Cloud `My Account` > `Security` > `Generate Tokens`.
-- Variable: `SONAR_ORGANIZATION=mohammedsafwan10`
-- Variable: `SONAR_PROJECT_KEY=mohammedsafwan10_devsecops-ci-pipeline-demo`
+- Variable: `SONAR_ORGANIZATION=<your SonarQube Cloud organization key>`
+- Variable: `SONAR_PROJECT_KEY=<your SonarQube Cloud project key>`
+- Optional variable: `SONAR_BRANCH_NAME=<SonarQube Cloud main branch name, only if different>`
 
 The workflow fails with a clear error if these are missing. This is intentional because the project requires an automated code quality gate.
 
@@ -153,7 +157,7 @@ ghcr.io/<owner>/<repo>:latest
 
 ## Demo Failure Branch
 
-The clean `main` branch is designed to pass. A separate branch named `demo/failing-security-gates` is used to show unsafe builds being blocked. Open a pull request from that branch into `main` and capture the failed checks for the college report.
+The clean `main` branch is designed to pass. A separate branch named `demo/failing-security-gates` is used to show unsafe builds being blocked. Open a pull request from that same repository branch into `main` and capture the failed checks for the college report. Same-repository demo branches are recommended because SonarQube Cloud needs the repository secret during CI.
 
 ## Security Note on the Runtime Image
 
@@ -161,4 +165,4 @@ The Dockerfile removes npm from the final runtime image after installing product
 
 ## Viva Explanation
 
-This project is a DevSecOps pipeline, not just a web app. The Express API is intentionally small so the focus stays on CI/CD automation. Every commit goes through automated gates. If a serious issue appears in the source code, dependency tree, Terraform files, or Docker image, the pipeline fails and the image is not published. That demonstrates the core requirement: unsafe builds are automatically blocked.
+This project is a DevSecOps pipeline, not just a web app. The Express API is intentionally small so the focus stays on CI/CD automation. Code pushed through the configured GitHub workflow goes through automated gates. If a serious issue appears in the source code, dependency tree, Terraform files, or Docker image, the pipeline fails and the image is not published. That demonstrates the core requirement: unsafe builds are automatically blocked.

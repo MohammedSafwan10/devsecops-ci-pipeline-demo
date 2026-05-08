@@ -25,5 +25,6 @@ terraform -chdir=infra validate
 Remove-Item -LiteralPath "infra\tfplan" -Force -ErrorAction SilentlyContinue
 trivy config --severity HIGH,CRITICAL --exit-code 1 infra/
 terraform -chdir=infra plan -no-color -out=tfplan
+Remove-Item -LiteralPath "infra\tfplan" -Force -ErrorAction SilentlyContinue
 
 Write-Host "Local verification complete"

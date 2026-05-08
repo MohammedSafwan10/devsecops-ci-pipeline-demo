@@ -4,7 +4,7 @@
 
 This is a DevSecOps CI/CD pipeline project.
 
-It uses a small Express API as a sample app. The main focus is the pipeline that checks the app automatically whenever code is pushed.
+It uses a small Express API as a sample app. The main focus is the pipeline that checks the app automatically whenever code is pushed to the configured branches or opened as a pull request.
 
 ## Why is the API small?
 
@@ -28,7 +28,7 @@ In this project, the Docker image is published only when all gates pass.
 
 DevSecOps means adding security into the DevOps pipeline.
 
-Security is not checked manually at the end. It is checked automatically during every commit or pull request.
+Security is not checked manually at the end. It is checked automatically during the configured push and pull request workflow.
 
 ## What are security gates?
 
@@ -71,4 +71,3 @@ The build is blocked.
 The Docker image is not published.
 
 That is the main goal of the project.
-
