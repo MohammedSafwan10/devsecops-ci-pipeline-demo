@@ -29,4 +29,14 @@ describe("DevSecOps demo API", () => {
 
     expect(response.body.error).toBe("Not found");
   });
+
+  test("malformed JSON returns a structured 500", async () => {
+    const response = await request(app)
+      .post("/api/status")
+      .set("Content-Type", "application/json")
+      .send("{bad-json")
+      .expect(500);
+
+    expect(response.body.error).toBe("Internal server error");
+  });
 });
