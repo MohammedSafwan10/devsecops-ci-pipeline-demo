@@ -4,7 +4,7 @@ College-ready project showing an end-to-end CI/CD pipeline with automated securi
 
 ## What This Project Demonstrates
 
-For a simple student/client handoff, start with [docs/setup/START_HERE.md](docs/setup/START_HERE.md).
+For a simple setup guide, start with [docs/setup/START_HERE.md](docs/setup/START_HERE.md).
 
 ```mermaid
 flowchart LR
@@ -103,7 +103,7 @@ Add these GitHub repository settings:
 - Variable: `SONAR_ORGANIZATION=mohammedsafwan10`
 - Variable: `SONAR_PROJECT_KEY=mohammedsafwan10_devsecops-ci-pipeline-demo`
 
-The workflow fails with a clear error if these are missing. This is intentional because the client requirement includes an automated code quality gate.
+The workflow fails with a clear error if these are missing. This is intentional because the project requires an automated code quality gate.
 
 ## Optional Local SonarQube Community Build
 
@@ -161,4 +161,4 @@ The Dockerfile removes npm from the final runtime image after installing product
 
 ## Viva Explanation
 
-This project is a DevSecOps pipeline, not just a web app. The Express API is intentionally small so the focus stays on CI/CD automation. Every commit goes through automated gates. If a serious issue appears in the source code, dependency tree, Terraform files, or Docker image, the pipeline fails and the image is not published. That demonstrates the core client requirement: unsafe builds are automatically blocked.
+This project is a DevSecOps pipeline, not just a web app. The Express API is intentionally small so the focus stays on CI/CD automation. Every commit goes through automated gates. If a serious issue appears in the source code, dependency tree, Terraform files, or Docker image, the pipeline fails and the image is not published. That demonstrates the core requirement: unsafe builds are automatically blocked.
