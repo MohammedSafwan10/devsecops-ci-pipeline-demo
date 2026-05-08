@@ -207,7 +207,10 @@ jobs:
 
           analysis_id=""
           for attempt in {1..60}; do
-            ce_response="$(curl --fail --silent --show-error --header "Authorization: Bearer ${SONAR_TOKEN}" "https://sonarcloud.io/api/ce/task?id=${ce_task_id}")"
+            if ! ce_response="$(curl --fail --silent --show-error --header "Authorization: Bearer ${SONAR_TOKEN}" "https://sonarcloud.io/api/ce/task?id=${ce_task_id}")"; then
+              echo "::error::SonarQube Cloud API access failed. Regenerate SONAR_TOKEN as a SonarQube Cloud user token from My Account > Security, then save it again in GitHub repository secrets."
+              exit 1
+            fi
             ce_status="$(node -e "const data = JSON.parse(process.argv[1]); console.log(data.task.status);" "$ce_response")"
 
             if [ "$ce_status" = "SUCCESS" ]; then
@@ -229,7 +232,10 @@ jobs:
             exit 1
           fi
 
-          gate_response="$(curl --fail --silent --show-error --header "Authorization: Bearer ${SONAR_TOKEN}" "https://sonarcloud.io/api/qualitygates/project_status?analysisId=${analysis_id}")"
+          if ! gate_response="$(curl --fail --silent --show-error --header "Authorization: Bearer ${SONAR_TOKEN}" "https://sonarcloud.io/api/qualitygates/project_status?analysisId=${analysis_id}")"; then
+            echo "::error::SonarQube Cloud quality gate API access failed. Regenerate SONAR_TOKEN as a SonarQube Cloud user token from My Account > Security, then save it again in GitHub repository secrets."
+            exit 1
+          fi
           gate_status="$(node -e "const data = JSON.parse(process.argv[1]); console.log(data.projectStatus.status);" "$gate_response")"
 
           echo "SonarQube quality gate status: ${gate_status}"
