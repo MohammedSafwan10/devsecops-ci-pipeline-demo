@@ -47,9 +47,11 @@ function createApp() {
   });
 
   app.use((err, _req, res, _next) => {
-    console.error(err);
-    res.status(500).json({
-      error: "Internal server error"
+    const statusCode = err.statusCode && err.statusCode < 500 ? err.statusCode : 500;
+    const message = statusCode < 500 ? "Invalid request payload" : "Internal server error";
+
+    res.status(statusCode).json({
+      error: message
     });
   });
 

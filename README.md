@@ -99,7 +99,7 @@ Add these GitHub repository settings:
 
 - Secret: `SONAR_TOKEN`
 - Variable: `SONAR_ORGANIZATION=mohammedsafwan10`
-- Variable: `SONAR_PROJECT_KEY=mohammedsafwan10_devsecops-ci-pipeline-demo`
+- Variable: `SONAR_PROJECT_KEY=MohammedSafwan10_devsecops-ci-pipeline-demo`
 
 The workflow fails with a clear error if these are missing. This is intentional because the client requirement includes an automated code quality gate.
 
