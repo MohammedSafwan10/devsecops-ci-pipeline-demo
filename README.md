@@ -2,6 +2,8 @@
 
 This project contains a Node.js/Express API and a GitHub Actions pipeline that runs security and quality checks automatically.
 
+This repository demonstrates automated DevSecOps checks on every code push.
+
 The pipeline checks:
 
 - application tests and linting
